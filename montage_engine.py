@@ -69,17 +69,13 @@ def create_masterpiece_montage(assets_dir, output_path):
     # ---------------------------------------------------------
     print("Generating Loud Label (Hook)...")
     hook_text = "WAIT FOR THE FINAL FINISH"
-    hook_img_path = "temp_assets/hook_label.png"
-    
-    # Use our Pillow caption engine to generate a stunning text image
-    create_text_image(hook_text, hook_img_path, highlight_words=["FINAL", "FINISH"])
+    # Use our Pillow caption engine to generate a stunning text image (returns numpy array)
+    text_img_array = create_text_image(hook_text, final_timeline.w, final_timeline.h, font_size=90, color="#FFD700")
     
     # Overlay the label for the first 3 seconds
-    hook_clip = ImageClip(hook_img_path)
-    # Resize to fit nicely in the middle of the vertical video
-    hook_clip = hook_clip.resize(width=final_timeline.w * 0.8)
-    # Position it slightly above center so it doesn't block the action
-    hook_clip = hook_clip.set_position(("center", 0.35), relative=True).set_duration(3.0).crossfadeout(0.5)
+    hook_clip = ImageClip(text_img_array)
+    # Position it in the center
+    hook_clip = hook_clip.set_position(("center", "center")).set_duration(3.0).crossfadeout(0.5)
     
     # Composite the label over the timeline
     final_composited = CompositeVideoClip([final_timeline, hook_clip])
