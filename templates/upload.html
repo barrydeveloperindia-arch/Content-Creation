@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpusClone - Englabs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg-dark: #0A0A0A;
+            --bg-sidebar: #121212;
+            --surface: #141414;
+            --text-main: #FFFFFF;
+            --text-muted: #888888;
+            --border: #2A2A2A;
+            --accent: #5E43FF; /* Opus Purple */
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* MICRO SIDEBAR */
+        .micro-sidebar {
+            width: 60px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+            z-index: 10;
+        }
+        .icon { width: 24px; height: 24px; background: #333; margin-bottom: 30px; border-radius: 4px; }
+        .icon.active { background: #FFD700; }
+        
+        /* MAIN AREA */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, #151515 0%, #0a0a0a 100%);
+        }
+        
+        /* TOP BAR */
+        .top-bar {
+            height: 70px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 30px;
+            z-index: 10;
+        }
+        .credits { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-right: 20px;}
+        .btn-credits { background: #222; border: 1px solid #444; color: white; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; }
+        
+        /* WATERMARK */
+        .watermark {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 250px;
+            font-weight: 800;
+            color: rgba(255,255,255,0.02);
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
+        }
+        
+        /* CENTER CONTENT */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            margin-top: -50px;
+        }
+        
+        h1 { font-size: 32px; font-weight: 700; margin-bottom: 30px; }
+        
+        /* UPLOAD BOX */
+        .upload-box {
+            width: 600px;
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            margin-bottom: 40px;
+        }
+        
+        .input-row {
+            background: #1A1A1A;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .input-row input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 100%;
+            outline: none;
+        }
+        .input-row input::placeholder { color: #666; }
+        
+        .upload-options {
+            display: flex; gap: 20px; font-size: 14px; font-weight: 600; color: #AAA; margin-bottom: 20px;
+        }
+        .upload-options span { cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .upload-options span:hover { color: white; }
+        
+        .btn-magic {
+            width: 100%;
+            background: white;
+            color: black;
+            border: none;
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-magic:hover { background: #E0E0E0; transform: translateY(-2px); }
+        
+        .sample-text { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 15px; text-decoration: underline; cursor: pointer; }
+        
+        /* FEATURES */
+        .features {
+            display: flex; gap: 40px;
+        }
+        .feature-item {
+            display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: #BBB;
+        }
+        .feature-circle {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: #1A1A1A;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+        }
+        
+        /* BOTTOM TOOLBAR */
+        .bottom-bar {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            height: 60px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; padding: 0 30px;
+            font-size: 13px; font-weight: 600; color: #888;
+            background: var(--bg-dark);
+        }
+        .bottom-bar span { color: white; }
+    </style>
+</head>
+<body>
+    <div class="micro-sidebar">
+        <div class="icon active" style="color:black; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:bold;">E</div>
+        <div class="icon" style="background:transparent; border:1px solid #444;"></div>
+        <div class="icon" style="background:transparent; border:1px solid #444;"></div>
+        <div class="icon" style="background:transparent; border:1px solid #444;"></div>
+    </div>
+    
+    <div class="main-area">
+        <div class="watermark">OpusClip</div>
+        
+        <div class="top-bar">
+            <div class="credits">⚡ 10</div>
+            <button class="btn-credits">Add more credits</button>
+        </div>
+        
+        <div class="content">
+            <h1>OpusClip</h1>
+            
+            <div class="upload-box">
+                <div class="input-row">
+                    <span style="color:#666;">🔗</span>
+                    <input type="text" placeholder="Drop an Englabs Assets folder path">
+                </div>
+                
+                <div class="upload-options">
+                    <span>↑ Upload</span>
+                    <span>☁ OneDrive</span>
+                </div>
+                
+                <button class="btn-magic" onclick="document.querySelector('.btn-magic').innerHTML='Analyzing Virality...'; setTimeout(()=>window.location.href='/editor', 1000);">Get clips in 1 click</button>
+                <div class="sample-text" onclick="window.location.href='/editor'">Click here to try a sample project</div>
+            </div>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-circle" style="color: #FFD700;">✨</div>
+                    <span>Long to shorts</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-circle" style="color: #00E676; font-family:monospace; font-weight:800;">CC</div>
+                    <span>AI Captions</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-circle" style="color: #5E43FF;">⛶</div>
+                    <span>AI Reframe</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bottom-bar">
+            <div>All projects (12) &nbsp;&nbsp;&nbsp; Saved projects (4)</div>
+            <div><span>1.4 GB</span> / 100 GB &nbsp;&nbsp;&nbsp; <button style="background:#222; border:1px solid #444; color:white; padding:4px 8px; border-radius:4px; cursor:pointer;">Questions?</button></div>
+        </div>
+    </div>
+</body>
+</html>

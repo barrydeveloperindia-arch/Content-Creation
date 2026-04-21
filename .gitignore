@@ -1,0 +1,27 @@
+# Virtual environments
+venv/
+env/
+.env
+
+# Video and Media Assets (Too large for GitHub)
+Assets/
+temp_assets/
+*.MOV
+*.mp4
+*.wav
+*.mkv
+*.avi
+*.png
+*.jpg
+*.jpeg
+
+# Python
+__pycache__/
+*.pyc
+
+# IDEs
+.vscode/
+.idea/
+
+# Local JSON files
+*.json

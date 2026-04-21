@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpusClone by Englabs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --bg-dark: #0A0A0A;
+            --bg-sidebar: #121212;
+            --surface: #1E1E1E;
+            --surface-hover: #2A2A2A;
+            --primary: #5E43FF; /* Opus Purple */
+            --primary-hover: #725DFF;
+            --text-main: #FFFFFF;
+            --text-muted: #888888;
+            --border: #333333;
+            --score-green: #00E676;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* SIDEBAR */
+        .sidebar {
+            width: 380px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .opus-logo { color: var(--text-main); }
+        .opus-badge { background: var(--primary); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .clip-list { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        
+        .clip-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .clip-card:hover, .clip-card.active {
+            border-color: var(--primary);
+            background-color: var(--surface-hover);
+        }
+        .clip-card.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background-color: var(--primary);
+        }
+        
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--score-green);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(0, 230, 118, 0.2);
+        }
+        
+        .clip-title { font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 8px; }
+        .clip-meta { font-size: 12px; color: var(--text-muted); display: flex; gap: 15px; }
+        
+        /* MAIN WORKSPACE */
+        .workspace {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-dark);
+        }
+        
+        .topbar {
+            height: 70px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 24px;
+            background: var(--bg-sidebar);
+        }
+        
+        .btn-export {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-export:hover { background-color: var(--primary-hover); }
+        
+        .editor-container {
+            display: flex;
+            flex: 1;
+            padding: 30px;
+            gap: 40px;
+            justify-content: center;
+        }
+        
+        /* VIDEO PLAYER */
+        .video-section {
+            width: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .video-player {
+            width: 100%;
+            aspect-ratio: 9/16;
+            background-color: #000;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background-image: linear-gradient(45deg, #111 25%, #1a1a1a 25%, #1a1a1a 50%, #111 50%, #111 75%, #1a1a1a 75%, #1a1a1a 100%);
+            background-size: 40px 40px;
+        }
+        
+        .play-btn {
+            width: 60px; height: 60px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .player-controls {
+            margin-top: 20px;
+            width: 100%;
+            background: var(--surface);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        /* CAPTION EDITOR */
+        .transcript-section {
+            flex: 1;
+            max-width: 600px;
+            background: var(--bg-sidebar);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .transcript-editor {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        .word {
+            display: inline-block;
+            margin-right: 4px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .word:hover { background: var(--surface-hover); }
+        .word.highlight { color: #FFD700; font-weight: 700; }
+        
+        .time-inputs {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            background: var(--surface);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+        
+        .input-group { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .input-group label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; }
+        .input-group input {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        /* Render Overlay */
+        .render-overlay {
+            position: absolute; inset: 0;
+            background: rgba(10,10,10,0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid rgba(94, 67, 255, 0.2);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span class="opus-logo">OpusClone</span>
+            <span class="opus-badge">by Englabs</span>
+        </div>
+        
+        <div class="clip-list">
+            {% for clip in clips %}
+            <div class="clip-card {% if loop.index == 1 %}active{% endif %}" onclick="selectClip(this, '{{ clip.source_video }}')">
+                <div class="score-badge">
+                    🔥 {{ clip.virality_score }}
+                </div>
+                <div class="clip-title">{{ clip.hook }}</div>
+                <div class="clip-meta">
+                    <span>Source: {{ clip.source_video }}</span>
+                    <span>{{ clip.end_time - clip.start_time }}s</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- MAIN WORKSPACE -->
+    <div class="workspace">
+        <div class="topbar">
+            <button class="btn-export" onclick="startRender()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Save and Compile
+            </button>
+        </div>
+        
+        <div class="editor-container">
+            <!-- VIDEO MOCKUP -->
+            <div class="video-section">
+                <div class="video-player">
+                    <div class="render-overlay" id="renderOverlay">
+                        <div class="spinner"></div>
+                        <h3 style="margin-bottom: 10px;">Rendering AI Video...</h3>
+                        <p style="color: var(--text-muted); font-size: 13px;">Applying Face Tracking & Captions</p>
+                    </div>
+                    
+                    <div class="play-btn">▶</div>
+                    <div style="position: absolute; bottom: 80px; text-align: center; width: 100%;">
+                        <div style="font-family: Impact, sans-serif; font-size: 28px; color: #FFF; -webkit-text-stroke: 1px black; text-transform: uppercase;">
+                            <span style="color: #FFD700;">FLAWLESS</span> FINISH
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="player-controls">
+                    <div style="height: 4px; background: #333; border-radius: 2px; width: 100%; margin-bottom: 10px;">
+                        <div style="height: 100%; width: 30%; background: var(--primary); border-radius: 2px;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted);">
+                        <span>00:00</span>
+                        <span>00:15</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CAPTION EDITOR -->
+            <div class="transcript-section">
+                <div class="section-header">
+                    <span>Caption Editor</span>
+                    <span style="font-size: 12px; color: var(--text-muted); background: #333; padding: 4px 8px; border-radius: 4px;">Auto-Hormozi Applied</span>
+                </div>
+                
+                <div class="transcript-editor">
+                    {% if clips %}
+                        <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 15px;">{{ clips[0].explanation }}</p>
+                        
+                        <!-- Dummy transcript for exact Opus feel -->
+                        <div>
+                            <span class="word">Look</span>
+                            <span class="word">at</span>
+                            <span class="word">this</span>
+                            <span class="word highlight">flawless</span>
+                            <span class="word highlight">powder</span>
+                            <span class="word highlight">coating</span>
+                            <span class="word">finish.</span>
+                            <span class="word">It</span>
+                            <span class="word">is</span>
+                            <span class="word">absolutely</span>
+                            <span class="word highlight">incredible.</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="time-inputs">
+                    <div class="input-group">
+                        <label>Start Time (s)</label>
+                        <input type="number" id="startTime" value="{% if clips %}{{ clips[0].start_time }}{% else %}0.0{% endif %}" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>End Time (s)</label>
+                        <input type="number" id="endTime" value="{% if clips %}{{ clips[0].end_time }}{% else %}15.0{% endif %}" step="0.1">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSource = "{% if clips %}{{ clips[0].source_video }}{% endif %}";
+        
+        function selectClip(element, source) {
+            document.querySelectorAll('.clip-card').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            currentSource = source;
+        }
+        
+        function startRender() {
+            const start = document.getElementById('startTime').value;
+            const end = document.getElementById('endTime').value;
+            
+            const overlay = document.getElementById('renderOverlay');
+            overlay.style.display = 'flex';
+            
+            fetch('/approve', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({source_video: currentSource, start_time: start, end_time: end})
+            })
+            .then(res => res.json())
+            .then(data => {
+                setTimeout(() => {
+                    overlay.innerHTML = `
+                        <div style="font-size: 40px; margin-bottom: 10px;">✅</div>
+                        <h3 style="color: #00E676;">Ready to Post!</h3>
+                    `;
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
