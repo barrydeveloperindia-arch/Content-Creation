@@ -44,11 +44,21 @@ The pipeline is split into distinct, modular Python engines:
 
 ---
 
-## 🚀 Master Task List (What's Left?)
+## 🚀 Master Task List & Future Recommendations
 
-While the V4 pipeline is now 100% operational and pushed to Git, the following modular skills can be added in Phase 2:
+While the V4 pipeline is now 100% operational, here are the high-impact recommendations to elevate the software to a true enterprise-grade engine:
 
-- [ ] **Instagram API Integration:** Build a script that takes `ENGLABS_WORKFLOW_MONTAGE_V4.mp4` and the `seo.json` and automatically pushes it to Instagram Reels via the Graph API.
-- [ ] **YouTube API Integration:** Build a YouTube Shorts publisher script.
-- [ ] **Background Worker:** Move the heavy MoviePy rendering off the Flask main thread into a `Celery` worker or a simple `queue` so the UI doesn't hang while rendering.
-- [ ] **Dynamic Color Palettes:** Add a UI toggle to let the user switch between Englabs Yellow, Cyberpunk Neon, or Classic White for the caption highlights.
+### 1. Advanced Video Editing (Retention Boosters)
+- [ ] **B-Roll Injection:** Train the LLM Engine to identify "boring" sections of a clip and automatically overlay B-Roll (e.g., showing the final product while the video explains the process).
+- [ ] **Auto-Zoom & Dynamic Panning:** Automatically apply a 10% slow digital zoom during static clips to maintain viewer retention without needing physical camera movement.
+- [ ] **Sound Design (SFX) Integration:** Automatically inject "swoosh" and "pop" sound effects when the Loud Labels or Hormozi captions appear on screen.
+- [ ] **Music Bed Auto-Ducking:** Add a viral background music track (like Phonk or Lo-Fi) and automatically lower its volume (ducking) when heavy machine noise or speaking occurs.
+
+### 2. Multi-Platform Architecture
+- [ ] **Omni-Channel Export:** Refactor the `montage_engine` to simultaneously export three versions: `9:16` (TikTok/Reels), `1:1` (LinkedIn Posts), and `16:9` (YouTube Standard).
+- [ ] **Instagram Graph API Integration:** Build a script that takes the final `V4.mp4` and `seo.json` and automatically publishes it to Instagram Reels.
+- [ ] **YouTube Shorts API Integration:** Build a native YouTube publisher script.
+
+### 3. UI & Infrastructure Improvements
+- [ ] **Asynchronous Rendering:** Move the heavy MoviePy rendering off the Flask main thread into a `Celery` worker or Redis queue so the UI doesn't hang.
+- [ ] **Dynamic Color Palettes:** Add a UI toggle allowing the user to switch the caption highlight colors between Englabs Yellow, Cyberpunk Neon, or Classic White.
